@@ -3,6 +3,23 @@
 
 Pass1:-
 
+Input:-
+
+initial.txt
+
+START 100
+MOV AREG A
+MOV BREG B
+MOV CREG =2
+MOV DREG =3
+ADD AREG BREG
+SUB AREG A
+A DC 05
+B DS 03
+END
+
+Code:
+
 import java.util.*;
 import java.io.*;
 public class pass1
@@ -186,23 +203,6 @@ public class pass1
         }
        
 } 
-
-
-Input:-
-
-initial.txt
-
-START 100
-MOV AREG A
-MOV BREG B
-MOV CREG =2
-MOV DREG =3
-ADD AREG BREG
-SUB AREG A
-A DC 05
-B DS 03
-END
-
 
 Output:-
 
