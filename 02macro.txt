@@ -1,0 +1,360 @@
+
+-------------------------------------Assignment-2------------------------------
+
+Macro1:-
+
+
+import java.util.*;
+import java.io.*;
+
+public class macro {
+    public static void main(String args[]) {
+
+        BufferedReader br;
+        OutputStream oo;
+        String input = null;
+        String tt = null;
+        String arg = null;
+        String macroTokens = null;
+        String mnt[] = new String[10];
+        String mdt[] = new String[20];
+        String AR[] = new String[20];
+        int macroindex[] = new int[10];
+        int mcount = 0, arg_count = 0;
+        int middlecount = 0;
+        int index = 1;
+        int macro_enc = 0;
+
+        try {
+            br = new BufferedReader(new FileReader("Input.txt"));
+            File f3 = new File("mnt.txt");
+            File f4 = new File("mdt.txt");
+            File f5 = new File("adt.txt");
+            PrintWriter p3 = new PrintWriter(f3);
+            PrintWriter p4 = new PrintWriter(f4);
+            PrintWriter p5 = new PrintWriter(f5);
+            while ((input = br.readLine()) != null) {
+                StringTokenizer st = new StringTokenizer(input, " ");
+                if (!st.hasMoreTokens()) continue; // Skip empty lines
+
+                tt = st.nextToken();
+                if (tt.equals("MACRO")) {
+                    macro_enc = 1;
+                    if (!st.hasMoreTokens()) continue; // Skip if no more tokens
+                    tt = st.nextToken();
+                    mnt[mcount] = tt;
+                    macroindex[mcount] = index;
+                    p3.println(mnt[mcount] + "\t" + macroindex[mcount]);
+                    p4.println(mnt[mcount]);
+                    p5.println(mnt[mcount]);
+                    mcount++;
+
+                    if (!st.hasMoreTokens()) continue; // Skip if no more tokens
+                    tt = st.nextToken();
+                    StringTokenizer t = new StringTokenizer(tt, ",");
+                    while (t.hasMoreTokens()) {
+                        arg = t.nextToken();
+                        if (arg.charAt(0) == '&') {
+                            AR[arg_count] = arg;
+                            p5.println(AR[arg_count]);
+                            arg_count++;
+                        }
+                    }
+                } else {
+                    if (macro_enc == 1) {
+                        if (input.equals("MEND")) {
+                            macro_enc = 0;
+                            p4.println("MEND");
+                        } else {
+                            StringTokenizer t = new StringTokenizer(input, " ");
+                            while (t.hasMoreTokens()) {
+                                macroTokens = t.nextToken();
+                                if (macroTokens.charAt(0) == '&') {
+                                    boolean found = false;
+                                    for (int i = 0; i < arg_count; i++) {
+                                        if (macroTokens.equals(AR[i])) {
+                                            p4.print("AR" + i);
+                                            found = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!found) {
+                                        p4.print(macroTokens);
+                                    }
+                                } else {
+                                    p4.print(macroTokens + " ");
+                                }
+                                if (!t.hasMoreTokens()) {
+                                    p4.println();
+                                }
+                            }
+                        }
+                    }
+                }
+                index++;
+            }
+            p3.close();
+            p4.close();
+            p5.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+Input:-
+
+Input.txt
+
+MACRO INCR1 &FIRST,&SECOND
+ADD AREG &FIRST
+LDA BREG &SECOND
+MEND
+MACRO INCR2 &ARG1,&ARG2
+MOV CREG &ARG1
+SUB DREG &ARG2
+MEND
+START 100
+MOV AREG A
+MOV BREG B
+INCR1
+MOV CREG =2
+MOV DREG =3
+ADD AREG BREG
+A DC 05
+B DS 03
+END
+
+Output:-
+
+Argument list array(adt)
+adt.txt
+
+INCR1
+&FIRST
+&SECOND
+INCR2
+&ARG1
+&ARG2
+
+Macro definition table(mdt)
+mdt.txt
+
+INCR1
+ADD AREG AR0
+LDA BREG AR1
+MEND
+INCR2
+MOV CREG AR2
+SUB DREG AR3
+MEND
+
+Macro name table(mnt)
+mnt.txt
+
+INCR1	1
+INCR2	5
+
+
+Macro2:-
+
+import java.util.*;
+import java.io.*;
+public class macro2
+{
+        public static void main(String args[])
+        {
+
+                BufferedReader br,br1,br2;
+                OutputStream oo;
+                String input=null,input1=null;
+                String tt=null;
+                String arg=null;
+                String macroTokens=null;
+                int macroindex[]=new int[10];
+                String mnt[]=new String[10];
+                int mcount=0,arg_count=0;
+                int middlecount=0;
+                int index=1;
+                int main_enc=0;
+              
+                try
+                {
+                        br=new BufferedReader(new FileReader("Input.txt"));
+                        br1=new BufferedReader(new FileReader("mnt.txt"));
+                        br2=new BufferedReader(new FileReader("mdt.txt"));
+                        File f = new File("finput.txt");
+                        PrintWriter p = new PrintWriter(f);
+                        int ii=0;
+                        while((input = br1.readLine())!=null)
+                        {
+                        	StringTokenizer st = new StringTokenizer(input,"\t");
+                        	if (!st.hasMoreTokens()) continue; // Skip empty lines
+                          	tt=st.nextToken();
+                        	mnt[ii]=tt;
+                        	System.out.println(mnt[ii]);
+                        	ii++;
+                        }
+                        while ((input = br.readLine()) != null)
+                        {
+         		  StringTokenizer st = new StringTokenizer(input," "); 
+         		  if (!st.hasMoreTokens()) continue; // Skip empty lines
+                          tt=st.nextToken();  
+                          if(tt.equals("START"))
+                          {
+		          	main_enc=1;
+		                p.print("START ");
+		                tt=st.nextToken();
+		                p.println(tt);
+                          }
+                         
+                          else
+                          {
+		               	 if(main_enc==1)
+		                  {
+		                      if(input.equals("END"))
+		                      {
+		                      	main_enc=0;
+		                      	p.println("END");
+		                      }
+		                      else
+		                      {
+		                                StringTokenizer t=new StringTokenizer(input," ");
+		                                //System.out.println(input);
+		                                while(t.hasMoreTokens())
+		                                {
+		                                
+		                                
+		                                     macroTokens=t.nextToken();
+		                                     for(int i=0;i<ii;i++)
+		                                     {
+		                                     	if(macroTokens.equals(mnt[i]))
+		                                     	{
+		                                     	int ff=0;
+		                                     	//System.out.println("match");
+		                                     		while((input1 = br2.readLine())!=null)
+								{
+									if(input1.equals(mnt[i]))
+									{
+										 ff=1;//System.out.println("match");
+										 continue;
+									}
+									
+									if(input1.equals("MEND"))
+									{
+										 ff=0;
+									}
+									
+									if(ff==1)
+									{
+										 p.println(input1);
+									}
+								}
+		                                     	}
+		                                     }
+		                                     
+		                                     if(!(t.hasMoreTokens()) && Arrays.asList(mnt).contains(macroTokens)){
+		                                     	//p.println(macroTokens);
+		                                     	
+		                                     	}
+		                                     else if(!(t.hasMoreTokens())){
+		                                     	p.println(macroTokens);
+		                                     	
+		                                     	}
+		                                     else
+		                                     	{
+		                                     		if (Arrays.asList(mnt).contains(macroTokens) )
+		                                     			{System.out.println("hi");}
+		                                     		else
+		                                     			p.print(macroTokens+" ");
+		                                     	
+		                                     
+		                                     }
+		                                     
+		                                        
+		                                }
+		                      }
+		                      
+		                  }
+                       	  }		   
+                       	index++;
+                        } 
+                        p.close();
+                }
+                catch(Exception e)
+                {
+                        e.printStackTrace();
+                }
+        }
+       
+} 
+
+Input:-
+
+Input.txt
+
+MACRO INCR1 &FIRST,&SECOND
+ADD AREG &FIRST
+LDA BREG &SECOND
+MEND
+MACRO INCR2 &ARG1,&ARG2
+MOV CREG &ARG1
+SUB DREG &ARG2
+MEND
+START 100
+MOV AREG A
+MOV BREG B
+INCR1
+MOV CREG =2
+MOV DREG =3
+ADD AREG BREG
+A DC 05
+B DS 03
+END
+
+Argument list array(adt)
+adt.txt
+
+INCR1
+&FIRST
+&SECOND
+INCR2
+&ARG1
+&ARG2
+
+Macro name table(mnt)
+mnt.txt
+
+INCR1	1
+INCR2	5
+
+Macro definition table(mdt)
+mdt.txt
+
+INCR1
+ADD AREG AR0
+LDA BREG AR1
+MEND
+INCR2
+MOV CREG AR2
+SUB DREG AR3
+MEND
+
+Output:-
+
+finput
+
+START 100
+MOV AREG A
+MOV BREG B
+ADD AREG AR0
+LDA BREG AR1
+MOV CREG =2
+MOV DREG =3
+ADD AREG BREG
+A DC 05
+B DS 03
+END
+
+
+
